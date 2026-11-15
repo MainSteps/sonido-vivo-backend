@@ -1,0 +1,46 @@
+name: Función
+description: Propón una nueva funcionalidad o una mejora del backend
+title: "[Feature]: "
+labels: ["tipo: feature"]
+body:
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto
+      description: Qué se necesita y por qué. Si suma décimas para el registro del backend, indícalo.
+      placeholder: Por ejemplo, el CRUD de productos debe quedar listo para el formulario del 16/11.
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+      description: Qué habría que implementar (endpoints, capas, migraciones, reglas de acceso).
+    validations:
+      required: true
+  - type: textarea
+    id: tareas
+    attributes:
+      label: Tareas
+      description: Lista de trabajo en formato de checklist.
+      value: |
+        - [ ] Tarea 1
+        - [ ] Tarea 2
+    validations:
+      required: true
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      description: Condiciones verificables para dar el issue por cerrado.
+      placeholder: |
+        - POST /api/ejemplo con un cuerpo válido responde 201 y persiste el registro.
+        - Sin el rol requerido responde 403.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencias
+    attributes:
+      label: Dependencias
+      description: Issues que deben cerrarse antes, si aplica.
+      placeholder: Depende de #n

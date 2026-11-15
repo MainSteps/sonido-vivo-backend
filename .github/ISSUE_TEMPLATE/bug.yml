@@ -1,0 +1,46 @@
+name: Error
+description: Reporta un error o un comportamiento incorrecto
+title: "[Bug]: "
+labels: ["tipo: bug"]
+body:
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Qué ocurre
+      description: Describe el error con el resultado esperado y el que obtuviste.
+    validations:
+      required: true
+  - type: dropdown
+    id: ambiente
+    attributes:
+      label: Ambiente
+      options:
+        - Local (Docker Compose)
+        - Otro
+    validations:
+      required: true
+  - type: textarea
+    id: reproducir
+    attributes:
+      label: Cómo reproducirlo
+      description: Pasos concretos, incluyendo endpoint, método, cuerpo y cabeceras si aplica.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: evidencia
+    attributes:
+      label: Evidencia
+      description: Logs, captura, respuesta HTTP o identificador del test que falla.
+    validations:
+      required: false
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      description: Cómo se verifica que el error quedó resuelto.
+    validations:
+      required: true
