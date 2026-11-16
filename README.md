@@ -60,7 +60,7 @@ Requisitos: **Java 21**. No hace falta Docker Compose para desarrollar: el perfi
    ./mvnw spring-boot:run
    ```
 
-La API queda en `http://127.0.0.1:8080`. La consola H2 está en [`/h2-console`](http://127.0.0.1:8080/h2-console) (solo perfil `dev`). Swagger UI estará en [`/swagger-ui.html`](http://127.0.0.1:8080/swagger-ui.html) cuando se complete la documentación OpenAPI.
+La API queda en `http://127.0.0.1:8080`. La consola H2 está en [`/h2-console`](http://127.0.0.1:8080/h2-console) (solo perfil `dev`). La documentación interactiva está en [Swagger UI](http://127.0.0.1:8080/swagger-ui.html) (`/swagger-ui.html`); usa **Authorize** con `Bearer <token>` para probar rutas protegidas.
 
 ### Health check
 
@@ -84,7 +84,7 @@ En el perfil `dev`, al arrancar la app el `AdminSeeder` crea un `ADMIN` si no ex
 
 En **producción** no hay estos defaults: define `ADMIN_EMAIL` y `ADMIN_PASSWORD` en el entorno si quieres un admin inicial; si faltan, no se crea ninguno.
 
-## Endpoints planificados
+## Endpoints
 
 | Método | Ruta | Descripción | Acceso |
 | --- | --- | --- | --- |
@@ -100,6 +100,41 @@ En **producción** no hay estos defaults: define `ADMIN_EMAIL` y `ADMIN_PASSWORD
 | `GET` | `/api/contacto` | Listar mensajes de contacto | `ADMIN` |
 
 El token JWT se envía en la cabecera `Authorization: Bearer <token>`.
+
+### Ejemplos rápidos (perfil `dev`)
+
+```bash
+# Listar productos (público)
+curl http://127.0.0.1:8080/api/productos
+
+# Login admin de prueba
+curl -X POST http://127.0.0.1:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"admin@sonidovivo.cl\",\"password\":\"Admin123!\"}"
+
+# Crear producto (sustituye TOKEN por el JWT del login)
+curl -X POST http://127.0.0.1:8080/api/productos \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"nombre\":\"Guitarra\",\"precio\":150000,\"stock\":3,\"categoria\":\"cuerdas\"}"
+```
+
+## Pruebas
+
+El proyecto incluye tests unitarios (Mockito en services) y de integración (MockMvc, Spring Boot context):
+
+| Área | Ubicación | Qué cubren |
+| --- | --- | --- |
+| Productos | `ProductoServiceTest`, `ProductoControllerTest` | CRUD, validación 400, 404 |
+| Auth | `AuthServiceTest`, `AuthControllerTest`, `AuthIntegrationTest` | Registro, login, 401, 409 |
+| Contacto | `ContactoServiceTest`, `ContactoControllerTest` | Alta y listado |
+| Seguridad | `SecurityIntegrationTest` | JWT 401/403, CORS, rutas públicas |
+
+Ejecutar todo el paquete de pruebas:
+
+```bash
+mvnw.cmd clean verify
+```
 
 ## Variables de entorno (perfil `prod`)
 

@@ -10,8 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.Instant;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,5 +46,19 @@ class ContactoServiceTest {
 
         assertThat(respuesta.id()).isEqualTo(1L);
         assertThat(respuesta.nombre()).isEqualTo("Diego");
+    }
+
+    @Test
+    void listarDevuelvePagina() {
+        MensajeContacto entidad = new MensajeContacto();
+        entidad.setId(1L);
+        var pageable = PageRequest.of(0, 10);
+        when(repository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(entidad)));
+        when(mapper.toResponse(entidad)).thenReturn(
+                new ContactoResponse(1L, "Diego", "a@b.com", "A", "M", Instant.now()));
+
+        var pagina = contactoService.listar(pageable);
+
+        assertThat(pagina.getTotalElements()).isOne();
     }
 }

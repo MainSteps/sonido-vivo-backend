@@ -61,6 +61,48 @@ class ProductoServiceTest {
     }
 
     @Test
+    void crearPersisteProducto() {
+        ProductoRequest request = new ProductoRequest(
+                "Bajo", "Desc", BigDecimal.valueOf(100), 2, "cuerdas", null);
+        Producto entidad = new Producto();
+        when(productoMapper.toEntity(request)).thenReturn(entidad);
+        when(productoRepository.save(entidad)).thenReturn(entidad);
+        when(productoMapper.toResponse(entidad)).thenReturn(respuestaEjemplo());
+
+        var respuesta = productoService.crear(request);
+
+        assertThat(respuesta.nombre()).isEqualTo("Guitarra");
+        verify(productoRepository).save(entidad);
+    }
+
+    @Test
+    void actualizarProductoExistente() {
+        ProductoRequest request = new ProductoRequest(
+                "Nuevo", null, BigDecimal.ONE, 1, null, null);
+        Producto producto = new Producto();
+        producto.setId(5L);
+        producto.setActivo(true);
+        when(productoRepository.findById(5L)).thenReturn(Optional.of(producto));
+        when(productoMapper.toResponse(producto)).thenReturn(respuestaEjemplo());
+
+        productoService.actualizar(5L, request);
+
+        verify(productoMapper).actualizarEntity(producto, request);
+    }
+
+    @Test
+    void obtenerPorIdDevuelveDto() {
+        Producto producto = new Producto();
+        producto.setId(1L);
+        when(productoRepository.findByIdAndActivoTrue(1L)).thenReturn(Optional.of(producto));
+        when(productoMapper.toResponse(producto)).thenReturn(respuestaEjemplo());
+
+        var respuesta = productoService.obtenerPorId(1L);
+
+        assertThat(respuesta.id()).isEqualTo(1L);
+    }
+
+    @Test
     void listarFiltraPorCategoria() {
         Pageable pageable = PageRequest.of(0, 10);
         Producto producto = new Producto();
