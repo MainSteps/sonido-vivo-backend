@@ -1,9 +1,11 @@
 package cl.sonidovivo.api.controller;
 
+import cl.sonidovivo.api.config.OpenApiConfig;
 import cl.sonidovivo.api.dto.ProductoRequest;
 import cl.sonidovivo.api.dto.ProductoResponse;
 import cl.sonidovivo.api.service.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -48,20 +50,23 @@ public class ProductoController {
     }
 
     @PostMapping
-    @Operation(summary = "Crear producto", description = "Requiere rol ADMIN (se aplicará en el issue #5).")
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
+    @Operation(summary = "Crear producto", description = "Requiere rol ADMIN.")
     public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest request) {
         ProductoResponse creado = productoService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar producto", description = "Requiere rol ADMIN (se aplicará en el issue #5).")
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
+    @Operation(summary = "Actualizar producto", description = "Requiere rol ADMIN.")
     public ProductoResponse actualizar(@PathVariable Long id, @Valid @RequestBody ProductoRequest request) {
         return productoService.actualizar(id, request);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar producto (lógico)", description = "Marca activo=false. Requiere rol ADMIN (issue #5).")
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
+    @Operation(summary = "Eliminar producto (lógico)", description = "Marca activo=false. Requiere rol ADMIN.")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();

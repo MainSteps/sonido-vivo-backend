@@ -2,11 +2,11 @@ package cl.sonidovivo.api.controller;
 
 import cl.sonidovivo.api.dto.ProductoResponse;
 import cl.sonidovivo.api.exception.RecursoNoEncontradoException;
-import cl.sonidovivo.api.security.SecurityConfig;
 import cl.sonidovivo.api.service.ProductoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
@@ -30,7 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductoController.class)
-@Import({SecurityConfig.class, cl.sonidovivo.api.exception.GlobalExceptionHandler.class})
+@AutoConfigureMockMvc(addFilters = false)
+@Import(cl.sonidovivo.api.exception.GlobalExceptionHandler.class)
 class ProductoControllerTest {
 
     @Autowired
