@@ -74,6 +74,16 @@ Respuesta esperada:
 {"status":"UP","app":"sonido-vivo-backend"}
 ```
 
+### Usuarios de prueba (solo desarrollo)
+
+En el perfil `dev`, al arrancar la app el `AdminSeeder` crea un `ADMIN` si no existe ese email. Los valores por defecto están en `application-dev.yml` (no en Flyway ni en prod):
+
+| Rol | Email | Contraseña |
+| --- | --- | --- |
+| `ADMIN` | `admin@sonidovivo.cl` | `Admin123!` |
+
+En **producción** no hay estos defaults: define `ADMIN_EMAIL` y `ADMIN_PASSWORD` en el entorno si quieres un admin inicial; si faltan, no se crea ninguno.
+
 ## Endpoints planificados
 
 | Método | Ruta | Descripción | Acceso |
@@ -104,8 +114,11 @@ Están definidas en `.env.example` con valores de ejemplo. No subas nunca un `.e
 | `JWT_SECRET` | Clave HS256 para firmar el JWT, de al menos 256 bits y distinta por entorno | `<secreto-aleatorio>` |
 | `JWT_EXPIRATION` | Expiración del token en milisegundos | `3600000` |
 | `CORS_ORIGINS` | Orígenes permitidos, separados por comas | `<url-del-front>[,<otra>]` |
+| `ADMIN_EMAIL` | Email del primer `ADMIN` (opcional; si falta, no se siembra) | `<email-admin>` |
+| `ADMIN_PASSWORD` | Contraseña del primer `ADMIN` (obligatoria junto con `ADMIN_EMAIL` para sembrar) | `<contraseña-segura>` |
+| `ADMIN_NOMBRE` | Nombre mostrado del admin inicial (opcional) | `Administrador` |
 
-`http://localhost:5173` se permite solo en el perfil `dev`; en el servidor no va.
+`http://localhost:5173` se permite solo en el perfil `dev`; en el servidor no va. La clave `Admin123!` del README aplica **solo** al perfil `dev`.
 
 ## Despliegue en el servidor de demo
 

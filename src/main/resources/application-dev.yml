@@ -20,3 +20,8 @@ app:
   jwt:
     secret: dev-jwt-secret-reemplazar-con-variable-de-entorno-minimo-256-bits-para-hs256-en-produccion
     expiration-ms: 3600000
+  # Solo desarrollo — no usar en producción
+  admin:
+    email: admin@sonidovivo.cl
+    password: Admin123!
+    nombre: Administrador
