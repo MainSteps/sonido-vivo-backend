@@ -50,6 +50,8 @@ desktop.ini
 # Secretos y entorno
 .env
 .env.local
+.env.*
+*.env
 .env.*.local
 *.pem
 *.p12
