@@ -22,10 +22,10 @@ public class JwtService {
         this.signingKey = Keys.hmacShaKeyFor(jwtProperties.secret().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generarToken(Usuario usuario) {
+    public JwtTokenResult generarToken(Usuario usuario) {
         Instant ahora = Instant.now();
         Instant expira = ahora.plusMillis(jwtProperties.expirationMs());
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .subject(usuario.getEmail())
                 .claim("uid", usuario.getId())
                 .claim("rol", usuario.getRol().name())
@@ -33,9 +33,6 @@ public class JwtService {
                 .expiration(Date.from(expira))
                 .signWith(signingKey)
                 .compact();
-    }
-
-    public Instant expiracionDesdeAhora() {
-        return Instant.now().plusMillis(jwtProperties.expirationMs());
+        return new JwtTokenResult(token, expira);
     }
 }

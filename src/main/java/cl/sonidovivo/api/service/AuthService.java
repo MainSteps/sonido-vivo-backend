@@ -32,12 +32,13 @@ public class AuthService {
 
     @Transactional
     public UsuarioAuthResponse registrar(RegistroRequest request) {
-        if (usuarioRepository.existsByEmailIgnoreCase(request.email())) {
+        String email = normalizarEmail(request.email());
+        if (usuarioRepository.existsByEmailIgnoreCase(email)) {
             throw new EmailDuplicadoException();
         }
         Usuario usuario = new Usuario();
         usuario.setNombre(request.nombre());
-        usuario.setEmail(request.email().trim().toLowerCase());
+        usuario.setEmail(email);
         usuario.setPasswordHash(passwordEncoder.encode(request.password()));
         usuario.setRol(Rol.CLIENTE);
         Usuario guardado = usuarioRepository.save(usuario);
@@ -46,17 +47,22 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(request.email())
+        String email = normalizarEmail(request.email());
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(CredencialesInvalidasException::new);
         if (!passwordEncoder.matches(request.password(), usuario.getPasswordHash())) {
             throw new CredencialesInvalidasException();
         }
-        String token = jwtService.generarToken(usuario);
+        var jwt = jwtService.generarToken(usuario);
         return new LoginResponse(
-                token,
+                jwt.token(),
                 "Bearer",
-                jwtService.expiracionDesdeAhora(),
+                jwt.expiraEn(),
                 toUsuarioAuthResponse(usuario));
+    }
+
+    private static String normalizarEmail(String email) {
+        return email == null ? "" : email.trim().toLowerCase();
     }
 
     private UsuarioAuthResponse toUsuarioAuthResponse(Usuario usuario) {
