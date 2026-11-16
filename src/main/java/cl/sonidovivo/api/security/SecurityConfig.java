@@ -76,6 +76,7 @@ public class SecurityConfig {
                     if (environment.acceptsProfiles(Profiles.of("dev"))) {
                         auth.requestMatchers("/h2-console/**").permitAll();
                     }
+                    auth.requestMatchers("/api/**").authenticated();
                     auth.anyRequest().permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

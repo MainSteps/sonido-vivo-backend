@@ -35,7 +35,28 @@ class SecurityIntegrationTest {
 
     @Test
     void rutaInexistenteSinTokenNoResponde401() throws Exception {
-        mockMvc.perform(get("/api/ruta-inexistente"))
+        mockMvc.perform(get("/no-existe"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void apiNoExisteSinTokenResponde401ConErrorUniforme() throws Exception {
+        mockMvc.perform(get("/api/no-existe"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.error").value("Unauthorized"))
+                .andExpect(jsonPath("$.message").value("No autenticado"))
+                .andExpect(jsonPath("$.path").value("/api/no-existe"))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.errores").isArray());
+    }
+
+    @Test
+    void apiNoExisteConClienteResponde404() throws Exception {
+        String token = registrarYLoginCliente();
+        mockMvc.perform(get("/api/no-existe")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }

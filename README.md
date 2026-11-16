@@ -99,7 +99,7 @@ En **producción** no hay estos defaults: define `ADMIN_EMAIL` y `ADMIN_PASSWORD
 | `POST` | `/api/contacto` | Enviar mensaje de contacto | Público |
 | `GET` | `/api/contacto` | Listar mensajes de contacto | `ADMIN` |
 
-El token JWT se envía en la cabecera `Authorization: Bearer <token>`.
+El token JWT se envía en la cabecera `Authorization: Bearer <token>`. Toda ruta bajo `/api` no listada en la tabla exige token (JWT válido); sin autenticación responde 401.
 
 ### Ejemplos rápidos (perfil `dev`)
 
