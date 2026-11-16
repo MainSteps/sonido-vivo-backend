@@ -34,6 +34,13 @@ class SecurityIntegrationTest {
     }
 
     @Test
+    void rutaInexistenteSinTokenNoResponde401() throws Exception {
+        mockMvc.perform(get("/api/ruta-inexistente"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
     void postProductosSinTokenResponde401() throws Exception {
         String body = """
                 {"nombre":"Teclado","precio":1000,"stock":1}

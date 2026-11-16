@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/error").permitAll();
                     auth.requestMatchers("/api/health").permitAll();
                     auth.requestMatchers("/api/auth/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/productos", "/api/productos/**").permitAll();
@@ -75,7 +76,7 @@ public class SecurityConfig {
                     if (environment.acceptsProfiles(Profiles.of("dev"))) {
                         auth.requestMatchers("/h2-console/**").permitAll();
                     }
-                    auth.anyRequest().denyAll();
+                    auth.anyRequest().permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
