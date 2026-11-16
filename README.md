@@ -2,7 +2,7 @@
 
 API REST monolítica de [Sonido Vivo](https://github.com/MainSteps/sonido-vivo-react), tienda de instrumentos y audio. El proyecto corresponde a DSY1104 Full Stack II (Duoc UC, 2026-2) y cubre el registro de backend previo a la Evaluación Parcial 3.
 
-El front que consume esta API es React + Vite + axios y corre en `http://localhost:5173`.
+El front que consume esta API es React + Vite + axios. En desarrollo corre en `http://localhost:5173`.
 
 ## Stack
 
@@ -93,18 +93,36 @@ El token JWT se envía en la cabecera `Authorization: Bearer <token>`.
 
 ## Variables de entorno (perfil `prod`)
 
-Definidas en `.env.example`. No subas un archivo `.env` con secretos reales.
+Están definidas en `.env.example` con valores de ejemplo. No subas nunca un `.env` con secretos reales.
 
-| Variable | Uso | Ejemplo (no secreto) |
+| Variable | Uso | Formato o ejemplo (no secreto) |
 | --- | --- | --- |
-| `DB_URL` | JDBC de PostgreSQL | `jdbc:postgresql://localhost:5432/sonido_vivo` |
-| `DB_USER` | Usuario de la base | `sonido` |
-| `DB_PASSWORD` | Contraseña de la base | `sonido` |
-| `JWT_SECRET` | Clave para firmar el JWT | `cambia-este-secreto-de-ejemplo` |
-| `JWT_EXPIRATION` | Expiración del token, en milisegundos | `3600000` |
-| `CORS_ORIGINS` | Orígenes permitidos | `http://localhost:5173` |
+| `SPRING_PROFILES_ACTIVE` | Perfil de Spring | `prod` en el servidor; si no se define, arranca `dev` |
+| `DB_URL` | JDBC de PostgreSQL 16 | `jdbc:postgresql://db:5432/<bd>` (`db` es el servicio Postgres del compose del servidor) |
+| `DB_USER` | Usuario de la base | `<usuario>` |
+| `DB_PASSWORD` | Contraseña de la base | `<contraseña>` |
+| `JWT_SECRET` | Clave HS256 para firmar el JWT, de al menos 256 bits y distinta por entorno | `<secreto-aleatorio>` |
+| `JWT_EXPIRATION` | Expiración del token en milisegundos | `3600000` |
+| `CORS_ORIGINS` | Orígenes permitidos, separados por comas | `<url-del-front>[,<otra>]` |
 
-En producción, configura estas variables en el servidor (contenedor PostgreSQL en el host, puerto interno 8080).
+`http://localhost:5173` se permite solo en el perfil `dev`; en el servidor no va.
+
+## Despliegue en el servidor de demo
+
+La demo corre en un servidor propio dentro de una red privada (Tailscale). No está expuesto a internet. El despliegue es **manual**:
+
+1. Cuando hay una versión lista, se clona `main` en el servidor y se construye con el compose y el Dockerfile **propios del servidor**. Si este repo trae un Dockerfile o un compose, el servidor no los usa. No hay CI, tags ni registro de imágenes.
+2. El build es `mvn -B -DskipTests package` con Maven 3.9 y JDK 21 (no usa `mvnw`). Debe quedar **un solo** jar ejecutable en `target/` (el repackage de Spring Boot).
+3. El contenedor corre con JRE 21, como usuario no root, con 768 MB de RAM (`MaxRAMPercentage=75`) y sin escritura en disco salvo `/tmp`.
+4. La app escucha en `0.0.0.0:8080` dentro del contenedor y se publica como `8081` en la red privada. El front se sirve en el `8080` del mismo servidor.
+5. `GET /api/health` es el endpoint de estado.
+
+Reglas que el código debe cumplir para funcionar ahí:
+
+- Todo el estado vive en PostgreSQL. No se guardan archivos en disco local.
+- No se llama a servicios externos en tiempo de ejecución; la única dependencia es la base `db`.
+- La configuración sale solo de variables de entorno y en el repo no hay secretos: solo `.env.example`, con placeholders.
+- El esquema cambia solo con migraciones Flyway nuevas (`V2__...`, `V3__...`), nunca editando una que ya esté en `main`.
 
 ## Flujo de trabajo
 

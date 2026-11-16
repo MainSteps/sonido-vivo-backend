@@ -70,3 +70,5 @@ spring-boot-devtools.properties
 *.swp
 *.swo
 *~
+
+!.env.example
