@@ -25,3 +25,5 @@ app:
     email: admin@sonidovivo.cl
     password: Admin123!
     nombre: Administrador
+  cors:
+    origins: http://localhost:5173

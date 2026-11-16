@@ -18,3 +18,5 @@ app:
     email: ${ADMIN_EMAIL:}
     password: ${ADMIN_PASSWORD:}
     nombre: ${ADMIN_NOMBRE:}
+  cors:
+    origins: ${CORS_ORIGINS:}

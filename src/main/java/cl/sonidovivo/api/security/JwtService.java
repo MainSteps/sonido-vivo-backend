@@ -2,14 +2,19 @@ package cl.sonidovivo.api.security;
 
 import cl.sonidovivo.api.config.JwtProperties;
 import cl.sonidovivo.api.entity.Usuario;
+import cl.sonidovivo.api.entity.Rol;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -34,5 +39,20 @@ public class JwtService {
                 .signWith(signingKey)
                 .compact();
         return new JwtTokenResult(token, expira);
+    }
+
+    public UsernamePasswordAuthenticationToken autenticar(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        String rol = claims.get("rol", String.class);
+        if (rol == null) {
+            throw new IllegalArgumentException("Rol JWT inválido");
+        }
+        Rol.valueOf(rol);
+        var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + rol));
+        return new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
     }
 }

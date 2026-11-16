@@ -1,9 +1,11 @@
 package cl.sonidovivo.api.controller;
 
+import cl.sonidovivo.api.config.OpenApiConfig;
 import cl.sonidovivo.api.dto.ContactoRequest;
 import cl.sonidovivo.api.dto.ContactoResponse;
 import cl.sonidovivo.api.service.ContactoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -37,7 +39,8 @@ public class ContactoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar mensajes de contacto", description = "Solo ADMIN (se aplicará en el issue #5).")
+    @SecurityRequirement(name = OpenApiConfig.BEARER_AUTH)
+    @Operation(summary = "Listar mensajes de contacto", description = "Solo ADMIN.")
     public Page<ContactoResponse> listar(
             @PageableDefault(size = 20, sort = "creadoEn", direction = Sort.Direction.DESC) Pageable pageable) {
         return contactoService.listar(pageable);
