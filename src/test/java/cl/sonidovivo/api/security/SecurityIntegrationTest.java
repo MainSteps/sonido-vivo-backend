@@ -93,6 +93,20 @@ class SecurityIntegrationTest {
     }
 
     @Test
+    void getContactoSinTokenResponde401() throws Exception {
+        mockMvc.perform(get("/api/contacto"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getContactoConClienteResponde403() throws Exception {
+        String token = registrarYLoginCliente();
+        mockMvc.perform(get("/api/contacto")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void corsPermiteOrigenLocalhost5173() throws Exception {
         mockMvc.perform(options("/api/productos")
                         .header(HttpHeaders.ORIGIN, "http://localhost:5173")

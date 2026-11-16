@@ -13,8 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import cl.sonidovivo.api.security.JwtTokenResult;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,6 +62,25 @@ class AuthServiceTest {
 
         assertThatThrownBy(() -> authService.login(new LoginRequest("a@b.com", "mala")))
                 .isInstanceOf(CredencialesInvalidasException.class);
+    }
+
+    @Test
+    void loginCorrectoDevuelveJwt() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Admin");
+        usuario.setEmail("admin@sonidovivo.cl");
+        usuario.setRol(Rol.ADMIN);
+        usuario.setPasswordHash("hash");
+        when(usuarioRepository.findByEmailIgnoreCase("admin@sonidovivo.cl")).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("Admin123!", "hash")).thenReturn(true);
+        when(jwtService.generarToken(usuario))
+                .thenReturn(new JwtTokenResult("jwt", Instant.parse("2030-01-01T00:00:00Z")));
+
+        var respuesta = authService.login(new LoginRequest("admin@sonidovivo.cl", "Admin123!"));
+
+        assertThat(respuesta.token()).isEqualTo("jwt");
+        assertThat(respuesta.usuario().rol()).isEqualTo(Rol.ADMIN);
     }
 
     @Test
