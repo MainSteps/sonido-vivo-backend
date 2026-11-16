@@ -74,6 +74,16 @@ Respuesta esperada:
 {"status":"UP","app":"sonido-vivo-backend"}
 ```
 
+### Usuarios de prueba (solo desarrollo)
+
+Tras aplicar Flyway en el perfil `dev`, existe un administrador precargado:
+
+| Rol | Email | Contraseña |
+| --- | --- | --- |
+| `ADMIN` | `admin@sonidovivo.cl` | `Admin123!` |
+
+En producción no uses estas credenciales; crea usuarios propios y un `JWT_SECRET` fuerte.
+
 ## Endpoints planificados
 
 | Método | Ruta | Descripción | Acceso |
