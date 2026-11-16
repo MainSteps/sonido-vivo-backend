@@ -50,6 +50,8 @@ desktop.ini
 # Secretos y entorno
 .env
 .env.local
+.env.*
+*.env
 .env.*.local
 *.pem
 *.p12
@@ -68,3 +70,5 @@ spring-boot-devtools.properties
 *.swp
 *.swo
 *~
+
+!.env.example

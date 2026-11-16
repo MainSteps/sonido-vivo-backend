@@ -1,0 +1,22 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:sonidovivo;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+# Solo desarrollo — no usar en producción
+app:
+  jwt:
+    secret: dev-jwt-secret-reemplazar-con-variable-de-entorno-minimo-256-bits-para-hs256-en-produccion
+    expiration-ms: 3600000
